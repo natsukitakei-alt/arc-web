@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#08121f"><meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>ARC · 今日のタスク</title><link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="stylesheet" href="/app.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header><a class="brand" href="/" aria-label="ARC ホーム"><span class="orb" aria-hidden="true"></span>ARC</a><span class="badge">PERSONAL ASSISTANT</span></header>
+    <section class="hero"><p class="eyebrow">SLACK TASKS</p><h1>今日、動くこと。</h1><p>自分への依頼と返信を、ひとつの一覧に。</p></section>
+    <p id="notice" class="notice" role="status" aria-live="polite">接続を確認しています…</p>
+    <section id="connect" class="panel" hidden><h2>Slackをつなぐ</h2><p>本人のメンション・DMから、対応するタスクの候補を整理します。接続後の更新はARCに自動で届きます。</p><a class="button primary" href="/auth/slack">Slackで接続する</a><p class="fine">本人専用。Slackへの投稿は行いません。</p></section>
+    <section id="dashboard" hidden>
+      <div class="stats"><div><strong id="todo-count">0</strong><span>対応する</span></div><div><strong id="waiting-count">0</strong><span>返答待ち</span></div><div><strong id="done-count">0</strong><span>完了</span></div></div>
+      <div class="toolbar"><span id="updated" class="fine">未取得</span><button id="refresh" class="button compact">更新</button></div>
+      <nav class="filters" aria-label="タスク表示"><button class="filter active" data-filter="todo" aria-pressed="true">対応する</button><button class="filter" data-filter="waiting" aria-pressed="false">返答待ち</button><button class="filter" data-filter="done" aria-pressed="false">完了</button><button class="filter" data-filter="all" aria-pressed="false">すべて</button></nav>
+      <div id="tasks" class="tasks" aria-live="polite"></div>
+      <p id="coverage" class="fine"></p><p class="fine">スレッド外の完了返信や曖昧な依頼は、原文で確認して状態を整理してください。</p>
+      <details class="panel"><summary>接続前のタスクを取り込む</summary><p>会話を最大3つ選び、直近7日・各15件を取り込みます。履歴が多い会話は一部の取得になります。</p><button id="list-channels" class="button">会話を表示する</button><div id="channels"></div><button id="import" class="button primary" hidden>選んだ会話を取り込む</button></details>
+      <details class="panel"><summary>保存と接続の設定</summary><p>依頼と関連する返信の短い本文を、本人専用サーバーに最大7日・160件保存します。タスクは最大40件。携帯にはSlackの内容を保存しません。</p><p>Slackの接続を外すと、保存データと全端末のログインも消去します。</p><div class="settings-actions"><button id="clear" class="button">保存タスクを消去</button><button id="logout" class="button">この端末をログアウト</button><button id="disconnect" class="button danger">Slackの接続を解除</button></div></details>
+    </section>
+    <section id="install-help" class="install"><span>iPhoneで使う</span><p>Safariで接続後、共有ボタン →「ホーム画面に追加」。</p></section>
+    <footer>ARC / 読み取る・整理する・確かめる</footer>
+  </main>
+</body></html>
