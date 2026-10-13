@@ -1,0 +1,45 @@
+name: ARC mobile Cloudflare
+
+on:
+  push:
+    branches: [arc-slack-mobile]
+    paths:
+      - 'arc-mobile/**'
+      - '.github/workflows/arc-mobile.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: arc-mobile-cloudflare
+  cancel-in-progress: false
+
+jobs:
+  verify-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: arc-mobile
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Install deployment CLI
+        run: npm install --no-audit --no-fund
+      - name: Verify owner-only Slack behavior
+        run: npm test
+      - name: Verify Worker bundle and configuration
+        run: npx wrangler deploy --dry-run --outdir .review-build
+      - name: Deploy ARC to Cloudflare
+        if: ${{ env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != '' }}
+        run: npx wrangler deploy
+      - name: Await deployment credentials
+        if: ${{ env.CLOUDFLARE_API_TOKEN == '' || env.CLOUDFLARE_ACCOUNT_ID == '' }}
+        run: echo 'Source validation completed. Deployment is waiting for approved repository secrets.'
+
