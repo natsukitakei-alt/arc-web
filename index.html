@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#07101b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ARC">
+    <meta name="description" content="声から、次の一歩へ。iPhoneのホーム画面で使う、ARCの無料Webアプリ。">
+    <title>ARC — あなたの相棒</title>
+    <link rel="icon" href="./icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="stylesheet" href="./app.css">
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="wordmark" aria-label="ARC">
+          <img src="./icon.svg" alt="" width="32" height="32">
+          <span>ARC</span>
+          <span class="edition">PERSONAL AI</span>
+        </div>
+        <button id="settings-button" class="icon-button" type="button" aria-label="設定と記憶を開く" aria-haspopup="dialog">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16M8 4v6m8 4v6"/></svg>
+        </button>
+      </header>
+
+      <main class="conversation" aria-label="ARCとの会話">
+        <section class="hero" aria-labelledby="welcome-title">
+          <div class="orb" aria-hidden="true">
+            <div class="orb-halo"></div>
+            <svg class="orb-rings" viewBox="0 0 180 180">
+              <circle class="ring-guide" cx="90" cy="90" r="78"/>
+              <circle class="ring-outer" cx="90" cy="90" r="70"/>
+              <circle class="ring-inner" cx="90" cy="90" r="56"/>
+              <path class="ring-ticks" d="M90 8v7m0 150v7M8 90h7m150 0h7"/>
+              <circle class="orb-core" cx="90" cy="90" r="37"/>
+            </svg>
+            <span class="orb-letter">A</span>
+          </div>
+          <div class="hero-copy">
+            <p class="eyebrow">YOUR EVERYDAY COMPANION</p>
+            <h1 id="welcome-title">あなたの声から、<br>次の一歩へ。</h1>
+            <div class="connection-state" role="status" aria-live="polite">
+              <span id="status-dot" class="status-dot" aria-hidden="true"></span>
+              <span id="status-text">起動しています</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="model-card" aria-label="無料AIの準備">
+          <div class="model-copy">
+            <div class="model-card-heading"><span class="mini-orbit" aria-hidden="true"></span><span>この端末で使う無料AI</span></div>
+            <p id="model-status" role="status" aria-live="polite">AIモデルは未準備です。</p>
+          </div>
+          <button id="model-load-button" class="small-button" type="button">AIを準備</button>
+          <progress id="model-progress" max="100" value="0" hidden aria-label="AIモデルのダウンロード進捗"></progress>
+          <p class="model-note">初回は約300〜400MB。Wi-Fiでの準備をおすすめします。</p>
+        </section>
+
+        <div id="chat-messages" class="chat-messages" role="log" aria-live="polite" aria-relevant="additions text" aria-label="会話履歴">
+          <article class="message assistant">
+            <span class="message-label">ARC</span>
+            <p>お手伝いします。まずは無料AIを準備してください。記憶やリマインダーは、設定から登録できます。</p>
+          </article>
+        </div>
+      </main>
+
+      <footer class="composer-area">
+        <div class="attachment-tray">
+          <img id="attachment-preview" class="attachment-image" alt="選択した添付画像" hidden>
+          <button id="attachment-clear" class="attachment-remove" type="button" aria-label="添付画像を外す" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>
+          </button>
+          <div class="ocr-controls">
+            <button id="ocr-button" class="ocr-button" type="button" disabled>写真の文字を読み取る</button>
+            <p id="ocr-status" class="ocr-status" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+        <form id="chat-form" class="chat-form">
+          <label for="message-input" class="sr-only">ARCへのメッセージ</label>
+          <textarea id="message-input" rows="2" maxlength="4000" placeholder="いま、何を手伝いましょう？" enterkeyhint="enter"></textarea>
+          <div class="composer-toolbar">
+            <div class="composer-actions">
+              <button id="mic-button" class="tool-button" type="button" aria-label="音声入力を始める">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11v1a6 6 0 0 0 12 0v-1M12 18v3m-3 0h6"/></svg>
+                <span>話す</span>
+              </button>
+              <button id="camera-button" class="tool-button" type="button" aria-label="文字を読むための写真を撮る・選ぶ">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h4l2-3h4l2 3h4v14H4z"/><circle cx="12" cy="12" r="3.5"/></svg>
+                <span id="camera-label">写真の文字</span>
+              </button>
+              <input id="camera-input" type="file" accept="image/*" capture="environment" hidden>
+            </div>
+            <button id="send-button" class="send-button" type="submit" aria-label="メッセージを送信" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg>
+            </button>
+          </div>
+        </form>
+        <div class="composer-footnote">
+          <span>ARC · 無料Web版</span>
+          <button id="install-help-button" class="text-button" type="button" aria-haspopup="dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7H5v14h14V7h-3M12 15V2m-4 4 4-4 4 4"/></svg>
+            ホーム画面に追加
+          </button>
+        </div>
+      </footer>
+    </div>
+
+    <dialog id="settings-dialog" class="drawer" aria-labelledby="settings-title">
+      <header class="drawer-header">
+        <div><p class="eyebrow">MAKE IT YOURS</p><h2 id="settings-title">あなたのARC</h2></div>
+        <button id="settings-close" class="icon-button" type="button" aria-label="設定を閉じる">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+      <div class="drawer-content">
+        <section class="settings-section">
+          <div class="setting-toggle">
+            <div><h3>声で応答</h3><p class="note">回答を読み上げます。</p></div>
+            <label class="switch"><input id="voice-toggle" type="checkbox" checked aria-label="回答を音声で読み上げる"><span class="switch-track" aria-hidden="true"></span></label>
+          </div>
+          <p class="note">音声入力はボタンを押して始めます。iPhoneの音声認識サービスを利用します。対応する機能はブラウザーや端末によって異なります。</p>
+        </section>
+
+        <section class="settings-section" aria-labelledby="memory-title">
+          <div class="section-heading"><span class="section-number">01</span><h3 id="memory-title">覚えてほしいこと</h3></div>
+          <p class="note">好みや目標を、このブラウザーに保存します。</p>
+          <label for="memory-input" class="sr-only">保存する記憶</label>
+          <textarea id="memory-input" rows="2" maxlength="500" placeholder="例：説明は短めに。朝はコーヒーが好き。"></textarea>
+          <button id="memory-save-button" class="wide-button" type="button">記憶に保存</button>
+          <div id="memories-list" class="saved-list" aria-live="polite"><p class="empty-state">まだ記憶はありません。</p></div>
+        </section>
+
+        <section class="settings-section" aria-labelledby="reminder-title">
+          <div class="section-heading"><span class="section-number">02</span><h3 id="reminder-title">忘れないために</h3></div>
+          <p class="note">ARCを開いている間にお知らせします。閉じている間の通知には対応していません。</p>
+          <label for="reminder-text" class="field-label">知らせてほしいこと</label>
+          <input id="reminder-text" type="text" maxlength="100" placeholder="例：少し休憩する">
+          <label for="reminder-datetime" class="field-label">日時</label>
+          <input id="reminder-datetime" type="datetime-local">
+          <button id="reminder-save-button" class="wide-button" type="button">リマインダーを保存</button>
+          <div id="reminders-list" class="saved-list" aria-live="polite"><p class="empty-state">予約はありません。</p></div>
+        </section>
+
+        <section class="settings-section settings-about">
+          <h3>この無料版について</h3>
+          <p class="note">モデルの準備と動作には、空き容量と対応する端末機能が必要です。モデルが使えるかどうかは、会話画面の状態表示で確認できます。</p>
+          <p class="note">会話とメモはこの端末に保存。音声入力はiPhoneの音声認識サービスを利用します。</p>
+          <p class="note">写真は文字の読み取りに使います。写真全体や物体の認識には対応していません。</p>
+          <p class="note">ブラウザーのデータを削除すると、記憶や履歴も消える場合があります。</p>
+          <button id="clear-history-button" class="danger-button" type="button">会話履歴を削除</button>
+          <p class="version-note">ARC / PERSONAL COMPANION / WEB</p>
+        </section>
+      </div>
+    </dialog>
+
+    <dialog id="install-dialog" class="install-dialog" aria-labelledby="install-title">
+      <header class="drawer-header">
+        <div><p class="eyebrow">ONE TAP AWAY</p><h2 id="install-title">ホーム画面にARCを。</h2></div>
+        <button id="install-close" class="icon-button" type="button" aria-label="ホーム画面への追加案内を閉じる">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+      </header>
+      <div class="install-content">
+        <img class="install-icon" src="./icon.svg" alt="ARCのアイコン" width="76" height="76">
+        <p>iPhoneのSafariで、このページを開いてください。</p>
+        <ol class="install-steps">
+          <li><span>01</span><div>Safariの<strong>共有ボタン</strong>を押す</div></li>
+          <li><span>02</span><div><strong>ホーム画面に追加</strong>を選ぶ</div></li>
+          <li><span>03</span><div>名前を確認して<strong>追加</strong>を押す</div></li>
+        </ol>
+        <p class="note">追加したARCのアイコンから、アプリのように開けます。Apple Developer登録やMacは不要です。</p>
+      </div>
+    </dialog>
+    <noscript><p class="noscript-message">ARCを使うには、SafariのJavaScriptを有効にしてください。</p></noscript>
+  </body>
+</html>
